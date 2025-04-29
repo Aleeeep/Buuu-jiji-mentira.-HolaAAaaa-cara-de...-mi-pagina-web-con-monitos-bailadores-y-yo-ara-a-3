@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Skybox 360 Fotográfico y Modelos 3D</title>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    #bloqueo {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      z-index: 9999;
+    }
+
+    #inputClave {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🔒 Pantalla de bloqueo -->
+<div id="bloqueo">
+  <h1>Hola</h1>
+  <input type="text" id="inputClave" placeholder="Escribe la clave..." />
+  <audio id="sonidoDesbloqueo" src="https://cdn.glitch.me/83724634-d861-4677-a0fd-d3ef82bd95b4/siete%20mil%20ataris%20x%20segundo.mp3?v=1745920425002" preload="auto"></audio>
+</div>
+
+<!-- 🎥 Escena A-Frame oculta inicialmente -->
+<a-scene id="escena" style="display: none;">
+  <a-sky src="Imagen JPEG-4147-8AFC-13-0.jpeg" rotation="0 -360 0"></a-sky>
+
+  <a-plane src="08e446db-44a7-4619-abb8-a24f20cec249.ecf3d968100290bb99a0c34328c4ac29.jpeg"
+           rotation="-90 6 0"
+           position="1 -6 -1"
+           width="30" height="30"
+           transparent="true"
+           repeat="5 5"
+           material="shader: flat; side: double;">
+  </a-plane>
+
+  <a-gltf-model id="modelo3d"
+                src="https://cdn.glitch.global/83724634-d861-4677-a0fd-d3ef82bd95b4/yourMesh%205.glb?v=1745910636262"
+                position="-7 3 -3"
+                scale="0.2 0.2 0.2"
+                rotation="0 0 0">
+  </a-gltf-model>
+
+  <a-gltf-model id="gato-morado"
+                src="https://cdn.glitch.global/83724634-d861-4677-a0fd-d3ef82bd95b4/gato%20morado.glb?v=1745913587127"
+                position="7 3 -3"
+                scale="0.2 0.2 0.2"
+                rotation="0 0 0">
+  </a-gltf-model>
+
+  <a-plane src="Tarántula-portada2.jpg"
+           position="0 5 -5"
+           height="5" width="5"
+           transparent="true"
+           rotation="0 0 0"
+           animation="property: position; to: 5 7 -5; dir: alternate; dur: 3000; loop: true"
+           material="shader: flat">
+  </a-plane>
+
+  <a-entity id="jugador" position="0 1.6 0" movement-controls>
+    <a-camera wasd-controls look-controls></a-camera>
+  </a-entity>
+
+  <script>
+    const modelo3d = document.querySelector('#modelo3d');
+    const gatoMorado = document.querySelector('#gato-morado');
+
+    window.addEventListener('keydown', function (event) {
+      if (event.key === "Enter") {
+        modelo3d.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 2000');
+        gatoMorado.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 2000');
+      } else if (event.code === "Space") {
+        modelo3d.setAttribute('animation', 'property: position; to: -7 1 -3; dir: alternate; loop: true; dur: 2000');
+        gatoMorado.setAttribute('animation', 'property: position; to: 7 5 -3; dir: alternate; loop: true; dur: 2200');
+      }
+    });
+  </script>
+</a-scene>
+
+<!-- 🔓 Script para desbloqueo -->
+<script>
+  const input = document.getElementById('inputClave');
+  const bloqueo = document.getElementById('bloqueo');
+  const escena = document.getElementById('escena');
+  const sonidoDesbloqueo = document.getElementById('sonidoDesbloqueo');
+
+  const clavesPermitidas = ['cara de bola', 'hola', 'ola', 'holi'];
+
+  input.addEventListener('keyup', function (e) {
+    if (e.key === "Enter") {
+      const valor = input.value.trim().toLowerCase();
+      if (clavesPermitidas.includes(valor)) {
+        sonidoDesbloqueo.play(); // 🔊 Sonido de desbloqueo
+        bloqueo.style.display = "none";
+        escena.style.display = "block";
+      } else {
+        input.value = "";
+        input.placeholder = "Clave incorrecta, intenta otra vez...";
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
